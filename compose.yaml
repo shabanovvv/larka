@@ -45,6 +45,7 @@ services:
 
     frontend:
         image: node:20-alpine
+        container_name: "laravel_front"
         working_dir: /app
         volumes:
             - ./resources/frontend:/app
@@ -108,6 +109,18 @@ services:
             RABBITMQ_QUEUE: '${RABBITMQ_QUEUE}'
         volumes:
             - 'sail-rabbitmq:/var/lib/rabbitmq'
+        networks:
+            - sail
+
+    adminer:
+        container_name: laravel-adminer
+        image: adminer
+        depends_on:
+            - mysql
+        environment:
+            - ADMINER_DEFAULT_SERVER=${DB_HOST}
+        ports:
+            - "8080:8080"
         networks:
             - sail
 

@@ -10,6 +10,7 @@
 </template>
 
 <script>
+import { API_URL } from '../config';
 export default {
     data() {
         return {
@@ -17,7 +18,7 @@ export default {
         }
     },
     async mounted() {
-        const response = await fetch('/api/events');
+        const response = await fetch(API_URL + '/api/events');
         const data = await response.json();
         this.events = data.events;
     }

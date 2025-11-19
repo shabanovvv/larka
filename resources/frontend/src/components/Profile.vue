@@ -9,6 +9,8 @@
 </template>
 
 <script>
+import { API_URL } from '../config.js';
+
 export default {
     data() {
         return {
@@ -17,7 +19,7 @@ export default {
     },
     async mounted() {
         // Заглушка - в реальном приложении брать ID из авторизации
-        const response = await fetch('/api/user/1');
+        const response = await fetch(API_URL + '/api/user/1');
         const data = await response.json();
         this.user = data.user;
     }

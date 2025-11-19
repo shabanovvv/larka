@@ -1,0 +1,731 @@
+Subject: [PATCH] hw02 - добавил страницы: Главная, Профиль, Авторизация, Регистрация
+Добавил Nginx и Php
+---
+Index: compose.yaml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/compose.yaml b/compose.yaml
+--- a/compose.yaml	(revision 298230d8bff9ac1460313c5f38a143be79ecda29)
++++ b/compose.yaml	(revision 27134fdd139aaca454e912022517f83d36af5624)
+@@ -1,31 +1,48 @@
++x-common-variables: &common-variables
++    WWWUSER: '${WWWUSER:-1000}'
++    WWWGROUP: '${WWWGROUP:-1000}'
++    APP_ENV: '${APP_ENV:-local}'
++    APP_DEBUG: '${APP_DEBUG:-false}'
++
+ services:
+-    laravel.test:
++    nginx:
++        image: nginx:alpine
++        container_name: "laravel_nginx"
++        ports:
++            - '${APP_PORT:-80}:80'
++            - '${APP_SSL_PORT:-443}:443'
++        volumes:
++            - '.:/var/www/html'
++            - './docker/nginx/default.conf:/etc/nginx/conf.d/default.conf'
++            - 'sail-php-socket:/var/run/php'
++        networks:
++            - sail
++
++    php:
+         build:
+-            context: ./vendor/laravel/sail/runtimes/8.4
++            context: ./docker/php
+             dockerfile: Dockerfile
+             args:
+                 WWWGROUP: '${WWWGROUP}'
+-        image: sail-8.4/app
++                PHP_VERSION: '${PHP_VERSION:-8.4}'
++                NODE_VERSION: '${NODE_VERSION:-20}'
++        container_name: "laravel_php"
+         extra_hosts:
+             - 'host.docker.internal:host-gateway'
+-        ports:
+-            - '${APP_PORT:-80}:80'
+-            - '${VITE_PORT:-5173}:${VITE_PORT:-5173}'
+         environment:
+-            WWWUSER: '${WWWUSER}'
++            <<: *common-variables
+             LARAVEL_SAIL: 1
+             XDEBUG_MODE: '${SAIL_XDEBUG_MODE:-off}'
+             XDEBUG_CONFIG: '${SAIL_XDEBUG_CONFIG:-client_host=host.docker.internal}'
+             IGNITION_LOCAL_SITES_PATH: '${PWD}'
++            PHP_FPM_LISTEN: '/var/run/php/php-fpm.sock'
+         volumes:
+             - '.:/var/www/html'
++            - 'sail-php-socket:/var/run/php'
++            - './docker/php/php-fpm.conf:/usr/local/etc/php-fpm.d/zz-docker.conf'
+         networks:
+             - sail
+-        depends_on:
+-            - mysql
+-            - valkey
+-            - meilisearch
+-            - rabbitmq
++
+     mysql:
+         image: 'mysql/mysql-server:8.0'
+         ports:
+@@ -43,14 +60,7 @@
+             - './vendor/laravel/sail/database/mysql/create-testing-database.sh:/docker-entrypoint-initdb.d/10-create-testing-database.sh'
+         networks:
+             - sail
+-        healthcheck:
+-            test:
+-                - CMD
+-                - mysqladmin
+-                - ping
+-                - '-p${DB_PASSWORD}'
+-            retries: 3
+-            timeout: 5s
++
+     valkey:
+         image: 'valkey/valkey:alpine'
+         ports:
+@@ -59,13 +69,7 @@
+             - 'sail-valkey:/data'
+         networks:
+             - sail
+-        healthcheck:
+-            test:
+-                - CMD
+-                - valkey-cli
+-                - ping
+-            retries: 3
+-            timeout: 5s
++
+     meilisearch:
+         image: 'getmeili/meilisearch:latest'
+         ports:
+@@ -76,15 +80,7 @@
+             - 'sail-meilisearch:/meili_data'
+         networks:
+             - sail
+-        healthcheck:
+-            test:
+-                - CMD
+-                - wget
+-                - '--no-verbose'
+-                - '--spider'
+-                - 'http://127.0.0.1:7700/health'
+-            retries: 3
+-            timeout: 5s
++
+     rabbitmq:
+         image: 'rabbitmq:4-management-alpine'
+         hostname: rabbitmq
+@@ -101,14 +97,7 @@
+             - 'sail-rabbitmq:/var/lib/rabbitmq'
+         networks:
+             - sail
+-        healthcheck:
+-            test:
+-                - CMD
+-                - rabbitmq-diagnostics
+-                - '-q'
+-                - ping
+-            retries: 3
+-            timeout: 5s
++
+ networks:
+     sail:
+         driver: bridge
+@@ -121,3 +110,5 @@
+         driver: local
+     sail-rabbitmq:
+         driver: local
++    sail-php-socket:
++        driver: local
+Index: docker/nginx/default.conf
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/docker/nginx/default.conf b/docker/nginx/default.conf
+new file mode 100644
+--- /dev/null	(revision 27134fdd139aaca454e912022517f83d36af5624)
++++ b/docker/nginx/default.conf	(revision 27134fdd139aaca454e912022517f83d36af5624)
+@@ -0,0 +1,42 @@
++
++server {
++    listen 80;
++    listen [::]:80;
++    server_name localhost;
++    root /var/www/html/public;
++    index index.php index.html;
++
++    client_max_body_size 100M;
++
++    location / {
++        try_files $uri $uri/ /index.php?$query_string;
++    }
++
++    location ~ \.php$ {
++        try_files $uri =404;
++        fastcgi_split_path_info ^(.+\.php)(/.+)$;
++        fastcgi_pass unix:/var/run/php/php-fpm.sock;
++        fastcgi_index index.php;
++        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
++        include fastcgi_params;
++
++        fastcgi_buffer_size 128k;
++        fastcgi_buffers 256 16k;
++        fastcgi_busy_buffers_size 256k;
++        fastcgi_temp_file_write_size 256k;
++    }
++
++    location ~ /\.ht {
++        deny all;
++    }
++
++    location ~ /\.env {
++        deny all;
++    }
++
++    # Static files caching
++    location ~* \.(jpg|jpeg|png|gif|ico|css|js|pdf|txt)$ {
++        expires 1y;
++        add_header Cache-Control "public, immutable";
++    }
++}
+Index: docker/php/Dockerfile
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/docker/php/Dockerfile b/docker/php/Dockerfile
+new file mode 100644
+--- /dev/null	(revision 27134fdd139aaca454e912022517f83d36af5624)
++++ b/docker/php/Dockerfile	(revision 27134fdd139aaca454e912022517f83d36af5624)
+@@ -0,0 +1,62 @@
++ARG PHP_VERSION=8.4
++FROM php:${PHP_VERSION}-fpm-alpine
++
++# Arguments
++ARG WWWGROUP
++ARG NODE_VERSION=20
++
++# Install system dependencies
++RUN apk update && apk add --no-cache \
++    git \
++    curl \
++    libpng-dev \
++    libxml2-dev \
++    zip \
++    unzip \
++    oniguruma-dev \
++    shadow \
++    bash \
++    freetype-dev \
++    libjpeg-turbo-dev \
++    libwebp-dev \
++    libxpm-dev \
++    libzip-dev \
++    linux-headers
++
++# Install PHP extensions (убираем sockets из основного списка)
++RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp && \
++    docker-php-ext-install \
++        pdo_mysql \
++        mbstring \
++        exif \
++        pcntl \
++        bcmath \
++        gd \
++        zip
++
++# Устанавливаем sockets отдельно с дополнительными флагами
++RUN docker-php-ext-install sockets
++
++# Install Composer
++COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
++
++# Install Node.js
++RUN apk add --no-cache nodejs npm
++
++# Create system user to run Composer and Artisan Commands
++RUN groupmod -o -g ${WWWGROUP} www-data && \
++    usermod -o -u ${WWWGROUP} -g www-data www-data
++
++# Create PHP socket directory
++RUN mkdir -p /var/run/php && chown www-data:www-data /var/run/php
++
++WORKDIR /var/www/html
++
++# Set permissions
++RUN chown -R www-data:www-data /var/www/html
++
++USER www-data
++
++EXPOSE 9000
++
++CMD ["php-fpm", "-R", "--nodaemonize"]
+Index: docker/php/php-fpm.conf
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/docker/php/php-fpm.conf b/docker/php/php-fpm.conf
+new file mode 100644
+--- /dev/null	(revision 27134fdd139aaca454e912022517f83d36af5624)
++++ b/docker/php/php-fpm.conf	(revision 27134fdd139aaca454e912022517f83d36af5624)
+@@ -0,0 +1,12 @@
++[www]
++user = www-data
++group = www-data
++listen = /var/run/php/php-fpm.sock
++listen.owner = www-data
++listen.group = www-data
++listen.mode = 0666
++pm = dynamic
++pm.max_children = 5
++pm.start_servers = 2
++pm.min_spare_servers = 1
++pm.max_spare_servers = 3
+Index: app/Http/Controllers/EventController.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/Http/Controllers/EventController.php b/app/Http/Controllers/EventController.php
+new file mode 100644
+--- /dev/null	(revision 6e137a7b0b23fb89224d75cf25c24b93dcc0fba2)
++++ b/app/Http/Controllers/EventController.php	(revision 6e137a7b0b23fb89224d75cf25c24b93dcc0fba2)
+@@ -0,0 +1,39 @@
++<?php
++
++namespace App\Http\Controllers;
++
++use Illuminate\Http\JsonResponse;
++
++class EventController extends Controller
++{
++    public function index(): JsonResponse
++    {
++        return response()->json([
++            'events' => [
++                [
++                    'id' => 1,
++                    'title' => 'Концерт рок-группы',
++                    'date' => '2024-12-25',
++                    'location' => 'Москва, Крокус Сити Холл'
++                ],
++                [
++                    'id' => 2,
++                    'title' => 'Выставка современного искусства',
++                    'date' => '2024-12-20',
++                    'location' => 'Санкт-Петербург, Эрмитаж'
++                ]
++            ]
++        ]);
++    }
++
++    public function show(int $id): JsonResponse
++    {
++        return response()->json([
++            'event' => [
++                'id' => $id,
++                'title' => 'Детали мероприятия ' . $id,
++                'description' => 'Описание мероприятия...'
++            ]
++        ]);
++    }
++}
+Index: app/Http/Controllers/UserController.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/Http/Controllers/UserController.php b/app/Http/Controllers/UserController.php
+new file mode 100644
+--- /dev/null	(revision 6e137a7b0b23fb89224d75cf25c24b93dcc0fba2)
++++ b/app/Http/Controllers/UserController.php	(revision 6e137a7b0b23fb89224d75cf25c24b93dcc0fba2)
+@@ -0,0 +1,30 @@
++<?php
++
++namespace App\Http\Controllers;
++
++use Illuminate\Http\JsonResponse;
++
++class UserController extends Controller
++{
++    public function show(int $id): JsonResponse
++    {
++        return response()->json([
++            'user' => [
++                'id' => $id,
++                'name' => 'Иван Иванов',
++                'email' => 'user@example.com'
++            ]
++        ]);
++    }
++
++    public function profile(): JsonResponse
++    {
++        return response()->json([
++            'user' => [
++                'id' => 1,
++                'name' => 'Текущий пользователь',
++                'email' => 'current@example.com'
++            ]
++        ]);
++    }
++}
+Index: bootstrap/app.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/bootstrap/app.php b/bootstrap/app.php
+--- a/bootstrap/app.php	(revision 27134fdd139aaca454e912022517f83d36af5624)
++++ b/bootstrap/app.php	(revision 6e137a7b0b23fb89224d75cf25c24b93dcc0fba2)
+@@ -7,6 +7,7 @@
+ return Application::configure(basePath: dirname(__DIR__))
+     ->withRouting(
+         web: __DIR__.'/../routes/web.php',
++        api: __DIR__.'/../routes/api.php',
+         commands: __DIR__.'/../routes/console.php',
+         health: '/up',
+     )
+Index: package.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/package.json b/package.json
+--- a/package.json	(revision 27134fdd139aaca454e912022517f83d36af5624)
++++ b/package.json	(revision 6e137a7b0b23fb89224d75cf25c24b93dcc0fba2)
+@@ -13,5 +13,10 @@
+         "laravel-vite-plugin": "^2.0.0",
+         "tailwindcss": "^4.0.0",
+         "vite": "^7.0.7"
++    },
++    "dependencies": {
++        "@vitejs/plugin-vue": "^6.0.1",
++        "vue": "^3.5.24",
++        "vue-router": "^4.6.3"
+     }
+ }
+Index: resources/js/App.vue
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/resources/js/App.vue b/resources/js/App.vue
+new file mode 100644
+--- /dev/null	(revision 6e137a7b0b23fb89224d75cf25c24b93dcc0fba2)
++++ b/resources/js/App.vue	(revision 6e137a7b0b23fb89224d75cf25c24b93dcc0fba2)
+@@ -0,0 +1,18 @@
++<template>
++    <div>
++        <nav class="p-4 border-b flex gap-4">
++            <router-link to="/">Главная</router-link>
++            <router-link to="/login">Вход</router-link>
++            <router-link to="/register">Регистрация</router-link>
++            <router-link to="/profile">Профиль</router-link>
++            <router-link to="/about">О нас</router-link>
++        </nav>
++        <main class="p-4">
++            <router-view />
++        </main>
++    </div>
++</template>
++
++<script>
++export default {}
++</script>
+Index: resources/js/app.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/resources/js/app.js b/resources/js/app.js
+--- a/resources/js/app.js	(revision 27134fdd139aaca454e912022517f83d36af5624)
++++ b/resources/js/app.js	(revision 6e137a7b0b23fb89224d75cf25c24b93dcc0fba2)
+@@ -1,1 +1,6 @@
+ import './bootstrap';
++import { createApp } from 'vue';
++import router from './router';
++import App from './App.vue';
++
++createApp(App).use(router).mount('#app');
+Index: resources/js/components/About.vue
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/resources/js/components/About.vue b/resources/js/components/About.vue
+new file mode 100644
+--- /dev/null	(revision 6e137a7b0b23fb89224d75cf25c24b93dcc0fba2)
++++ b/resources/js/components/About.vue	(revision 6e137a7b0b23fb89224d75cf25c24b93dcc0fba2)
+@@ -0,0 +1,7 @@
++<template>
++    <div class="about">
++        <h1>О нас</h1>
++        <p>EventPass - платформа для организации и поиска мероприятий.</p>
++        <p>Находите интересные события и создавайте свои!</p>
++    </div>
++</template>
+Index: resources/js/components/Home.vue
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/resources/js/components/Home.vue b/resources/js/components/Home.vue
+new file mode 100644
+--- /dev/null	(revision 6e137a7b0b23fb89224d75cf25c24b93dcc0fba2)
++++ b/resources/js/components/Home.vue	(revision 6e137a7b0b23fb89224d75cf25c24b93dcc0fba2)
+@@ -0,0 +1,25 @@
++<template>
++    <div class="home">
++        <h1>Главная - Мероприятия</h1>
++        <div v-for="event in events" :key="event.id" class="event-card">
++            <h3>{{ event.title }}</h3>
++            <p>📅 {{ event.date }}</p>
++            <p>📍 {{ event.location }}</p>
++        </div>
++    </div>
++</template>
++
++<script>
++export default {
++    data() {
++        return {
++            events: []
++        }
++    },
++    async mounted() {
++        const response = await fetch('/api/events');
++        const data = await response.json();
++        this.events = data.events;
++    }
++}
++</script>
+Index: resources/js/components/Login.vue
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/resources/js/components/Login.vue b/resources/js/components/Login.vue
+new file mode 100644
+--- /dev/null	(revision 6e137a7b0b23fb89224d75cf25c24b93dcc0fba2)
++++ b/resources/js/components/Login.vue	(revision 6e137a7b0b23fb89224d75cf25c24b93dcc0fba2)
+@@ -0,0 +1,27 @@
++<template>
++    <div class="login">
++        <h1>Вход в систему</h1>
++        <form @submit.prevent="login">
++            <input type="email" v-model="email" placeholder="Email" required>
++            <input type="password" v-model="password" placeholder="Пароль" required>
++            <button type="submit">Войти</button>
++        </form>
++    </div>
++</template>
++
++<script>
++export default {
++    data() {
++        return {
++            email: '',
++            password: ''
++        }
++    },
++    methods: {
++        login() {
++            // Заглушка для демонстрации
++            alert('Форма входа (будет реализовано позже)');
++        }
++    }
++}
++</script>
+Index: resources/js/components/Profile.vue
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/resources/js/components/Profile.vue b/resources/js/components/Profile.vue
+new file mode 100644
+--- /dev/null	(revision 6e137a7b0b23fb89224d75cf25c24b93dcc0fba2)
++++ b/resources/js/components/Profile.vue	(revision 6e137a7b0b23fb89224d75cf25c24b93dcc0fba2)
+@@ -0,0 +1,25 @@
++<template>
++    <div class="profile">
++        <h1>Профиль пользователя</h1>
++        <div v-if="user">
++            <p><strong>Имя:</strong> {{ user.name }}</p>
++            <p><strong>Email:</strong> {{ user.email }}</p>
++        </div>
++    </div>
++</template>
++
++<script>
++export default {
++    data() {
++        return {
++            user: null
++        }
++    },
++    async mounted() {
++        // Заглушка - в реальном приложении брать ID из авторизации
++        const response = await fetch('/api/user/1');
++        const data = await response.json();
++        this.user = data.user;
++    }
++}
++</script>
+Index: resources/js/components/Register.vue
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/resources/js/components/Register.vue b/resources/js/components/Register.vue
+new file mode 100644
+--- /dev/null	(revision 6e137a7b0b23fb89224d75cf25c24b93dcc0fba2)
++++ b/resources/js/components/Register.vue	(revision 6e137a7b0b23fb89224d75cf25c24b93dcc0fba2)
+@@ -0,0 +1,28 @@
++<template>
++    <div class="register">
++        <h1>Регистрация</h1>
++        <form @submit.prevent="register">
++            <input type="text" v-model="name" placeholder="Имя" required>
++            <input type="email" v-model="email" placeholder="Email" required>
++            <input type="password" v-model="password" placeholder="Пароль" required>
++            <button type="submit">Зарегистрироваться</button>
++        </form>
++    </div>
++</template>
++
++<script>
++export default {
++    data() {
++        return {
++            name: '',
++            email: '',
++            password: ''
++        }
++    },
++    methods: {
++        register() {
++            alert('Форма регистрации (прототип)');
++        }
++    }
++}
++</script>
+Index: resources/js/router/index.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/resources/js/router/index.js b/resources/js/router/index.js
+new file mode 100644
+--- /dev/null	(revision 6e137a7b0b23fb89224d75cf25c24b93dcc0fba2)
++++ b/resources/js/router/index.js	(revision 6e137a7b0b23fb89224d75cf25c24b93dcc0fba2)
+@@ -0,0 +1,19 @@
++import { createRouter, createWebHistory } from 'vue-router';
++import Home from '../components/Home.vue';
++import About from '../components/About.vue';
++import Login from '../components/Login.vue';
++import Profile from '../components/Profile.vue';
++import Register from '../components/Register.vue';
++
++const routes = [
++    {path: '/', component: Home},
++    {path: '/about', component: About},
++    {path: '/login', component: Login},
++    {path: '/profile', component: Profile},
++    {path: '/register', component: Register},
++];
++
++export default createRouter({
++    history: createWebHistory(),
++    routes,
++});
+Index: resources/views/app.blade.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/resources/views/app.blade.php b/resources/views/app.blade.php
+new file mode 100644
+--- /dev/null	(revision 6e137a7b0b23fb89224d75cf25c24b93dcc0fba2)
++++ b/resources/views/app.blade.php	(revision 6e137a7b0b23fb89224d75cf25c24b93dcc0fba2)
+@@ -0,0 +1,12 @@
++<!DOCTYPE html>
++<html lang="ru">
++<head>
++    <meta charset="UTF-8">
++    <meta name="viewport" content="width=device-width, initial-scale=1.0">
++    <title>EventPass</title>
++    @vite(['resources/css/app.css', 'resources/js/app.js'])
++</head>
++<body>
++<div id="app"></div>
++</body>
++</html>
+Index: routes/api.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/routes/api.php b/routes/api.php
+new file mode 100644
+--- /dev/null	(revision 6e137a7b0b23fb89224d75cf25c24b93dcc0fba2)
++++ b/routes/api.php	(revision 6e137a7b0b23fb89224d75cf25c24b93dcc0fba2)
+@@ -0,0 +1,12 @@
++<?php
++
++use Illuminate\Support\Facades\Route;
++use App\Http\Controllers\EventController;
++use App\Http\Controllers\UserController;
++
++// Публичные маршруты
++Route::get('/events', [EventController::class, 'index']);
++Route::get('/events/{id}', [EventController::class, 'show']);
++Route::get('/user/{id}', [UserController::class, 'show']);
++
++Route::get('/profile', [UserController::class, 'profile']);
+Index: routes/web.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/routes/web.php b/routes/web.php
+--- a/routes/web.php	(revision 27134fdd139aaca454e912022517f83d36af5624)
++++ b/routes/web.php	(revision 6e137a7b0b23fb89224d75cf25c24b93dcc0fba2)
+@@ -2,6 +2,6 @@
+ 
+ use Illuminate\Support\Facades\Route;
+ 
+-Route::get('/', function () {
+-    return view('welcome');
+-});
++Route::get('/{any}', function () {
++    return view('app');
++})->where('any', '.*');
+Index: vite.config.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/vite.config.js b/vite.config.js
+--- a/vite.config.js	(revision 27134fdd139aaca454e912022517f83d36af5624)
++++ b/vite.config.js	(revision 6e137a7b0b23fb89224d75cf25c24b93dcc0fba2)
+@@ -1,6 +1,7 @@
+ import { defineConfig } from 'vite';
+ import laravel from 'laravel-vite-plugin';
+ import tailwindcss from '@tailwindcss/vite';
++import vue from '@vitejs/plugin-vue'
+ 
+ export default defineConfig({
+     plugins: [
+@@ -9,5 +10,6 @@
+             refresh: true,
+         }),
+         tailwindcss(),
++        vue(),
+     ],
+ });

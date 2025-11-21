@@ -33,7 +33,7 @@ return new class extends Migration
         Schema::create('reviews', function (Blueprint $table) {
             $table->id();
             $table->foreignId('code_submission_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('mentor_id')->constrained('users')->nullOnDelete();
+            $table->foreignId('mentor_id')->nullable()->constrained('users')->nullOnDelete();
             $table->string('status')->default('pending');
             $table->text('comment')->nullable();
             $table->unsignedTinyInteger('rating')->nullable();

@@ -25,12 +25,11 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('title');
             $table->text('description')->nullable();
-            $table->string('language', 50)->nullable();
             $table->string('status', 32)->default('draft');
             $table->foreignId('mentor_id')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
 
-            $table->index(['status', 'language']);
+            $table->index(['status']);
         });
 
         /**
@@ -44,6 +43,18 @@ return new class extends Migration
             $table->longText('content');
             $table->timestamps();
         });
+
+        /**
+         * Связывает код с технологиями
+         */
+        Schema::create('code_submission_technology', function (Blueprint $table) {
+            $table->foreignId('code_submission_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('technology_id')->constrained()->cascadeOnDelete();
+            $table->unique(
+                ['code_submission_id', 'technology_id'],
+                'code_sub_tech_unique'
+            );
+        });
     }
 
     /**
@@ -51,6 +62,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('code_submission_technology');
         Schema::dropIfExists('submission_files');
         Schema::dropIfExists('code_submissions');
     }

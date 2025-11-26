@@ -2,21 +2,31 @@
 
 namespace App\Services;
 
+use App\DTO\SortDTO;
 use App\Models\User;
 use App\Repositories\UserRepository;
-use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Hash;
 
+/**
+ * Сервис для CRUD-операций над пользователями админки.
+ */
 readonly class UserService
 {
     public function __construct(private UserRepository $userRepository)
     {}
 
-    public function paginate(int $perPage): LengthAwarePaginator
+    /**
+     * Возвращает страницу пользователей с сортировкой.
+     */
+    public function paginate(int $perPage, SortDTO $sortDTO): LengthAwarePaginator
     {
-        return $this->userRepository->paginate($perPage);
+        return $this->userRepository->paginate($perPage, $sortDTO);
     }
 
+    /**
+     * Создаёт нового пользователя.
+     */
     public function store(array $data): User
     {
         $data = $this->prepareData($data);
@@ -24,6 +34,9 @@ readonly class UserService
         return $this->userRepository->create($data);
     }
 
+    /**
+     * Обновляет пользователя и возвращает актуальную модель.
+     */
     public function update(User $user, array $data): User
     {
         $data = $this->prepareData($data);
@@ -32,6 +45,9 @@ readonly class UserService
         return $user->refresh();
     }
 
+    /**
+     * Нормализует данные перед сохранением (хеширует пароль).
+     */
     private function prepareData(array $data): array
     {
         // Хешируем пароль, если он передан
@@ -45,9 +61,14 @@ readonly class UserService
         return $data;
     }
 
+    /**
+     * Удаляет пользователя.
+     */
     public function delete(User $user): void
     {
         $this->userRepository->delete($user);
     }
 }
+
+
 

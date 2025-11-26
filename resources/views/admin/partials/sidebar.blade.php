@@ -29,6 +29,13 @@
                 Роли
             </a>
         </li>
+
+        <li class="nav-item mb-1">
+            <a href="{{ route('admin.mentor-profile.index') }}"
+               class="nav-link text-white @if(request()->routeIs('admin.mentor-profile.index')) active @endif">
+                Профили менторов
+            </a>
+        </li>
     </ul>
 
     <hr>

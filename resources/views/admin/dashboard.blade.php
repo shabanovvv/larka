@@ -22,6 +22,7 @@
             <div class="card shadow-sm">
                 <div class="card-body">
                     <h5 class="card-title">Пользователи</h5>
+                    <p class="card-text">Участники системы: студенты, менторы, администраторы</p>
                     <a href="{{ route('admin.users.index') }}" class="btn btn-primary btn-sm">
                         Открыть
                     </a>

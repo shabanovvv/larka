@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * Загруженный файл в рамках отправки студентом.
+ */
 class SubmissionFile extends Model
 {
     use HasFactory;
@@ -17,11 +20,17 @@ class SubmissionFile extends Model
         'content',
     ];
 
+    /**
+     * Отправка кода, которой принадлежит файл.
+     */
     public function codeSubmission(): BelongsTo
     {
         return $this->belongsTo(CodeSubmission::class);
     }
 
+    /**
+     * Комментарии ревью, оставленные на этот файл.
+     */
     public function reviewComments(): HasMany
     {
         return $this->hasMany(ReviewComment::class);

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\MentorProfileController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\TechnologyController;
 use App\Http\Controllers\Admin\UserController;
@@ -11,5 +12,6 @@ Route::prefix('/admin')->name('admin.')->group(function () {
 
     Route::resource('/technologies', TechnologyController::class);
     Route::resource('/users', UserController::class);
-    ROute::resource('/roles', RoleController::class);
+    Route::resource('/roles', RoleController::class);
+    Route::resource('/mentor-profile', MentorProfileController::class);
 });

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\DTO\SortDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\TechnologyStoreRequest;
 use App\Http\Requests\Admin\TechnologyUpdateRequest;
@@ -9,6 +10,7 @@ use App\Models\Technology;
 use App\Services\TechnologyService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
+use Illuminate\Http\Request;
 
 /**
  * CRUD-контроллер админки для управления технологиями.
@@ -24,12 +26,15 @@ class TechnologyController extends Controller
     /**
      * Список технологий с пагинацией.
      *
+     * @param Request $request
      * @return View
      */
-    public function index(): View
+    public function index(Request $request): View
     {
+        $sortDTO = SortDTO::fromRequest($request);
+
         return view('admin.technologies.index', [
-            'technologies' => $this->technologyService->paginate(20),
+            'technologies' => $this->technologyService->paginate(20, $sortDTO),
         ]);
     }
 

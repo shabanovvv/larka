@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\DTO\SortDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UserStoreRequest;
 use App\Http\Requests\Admin\UserUpdateRequest;
@@ -9,6 +10,7 @@ use App\Models\User;
 use App\Services\UserService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
+use Illuminate\Http\Request;
 
 /**
  * CRUD-контроллер админки для управления пользователями.
@@ -24,12 +26,15 @@ class UserController extends Controller
     /**
      * Список пользователей с пагинацией.
      *
+     * @param Request $request
      * @return View
      */
-    public function index(): View
+    public function index(Request $request): View
     {
+        $sortDTO = SortDTO::fromRequest($request);
+
         return view('admin.users.index', [
-            'users' => $this->userService->paginate(20),
+            'users' => $this->userService->paginate(20, $sortDTO),
         ]);
     }
 

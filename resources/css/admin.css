@@ -1,0 +1,42 @@
+body {
+    min-height: 100vh;
+    height: 100%;
+    margin: 0;
+}
+
+.admin-wrapper {
+    display: flex;
+    min-height: 100vh;
+    height: 100%;
+}
+
+/* Левое меню */
+.admin-sidebar {
+    width: 260px;
+    background-color: #212529;
+    color: #fff;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-sidebar a {
+    color: #f8f9fa;
+    text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    display: block;
+}
+
+.admin-sidebar a.active,
+.admin-sidebar a:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Правая часть */
+.admin-content {
+    flex-grow: 1;
+    padding: 24px;
+    background: #f8f9fa;
+    overflow-y: auto;
+}

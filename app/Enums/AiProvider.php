@@ -2,6 +2,9 @@
 
 namespace App\Enums;
 
+/**
+ * Перечисление поддерживаемых AI-провайдеров для анализа кода.
+ */
 enum AiProvider: string
 {
     case OPENAI = 'openai';
@@ -9,6 +12,11 @@ enum AiProvider: string
     case GEMINI = 'gemini';
     case CUSTOM = 'custom';
 
+    /**
+     * Человекочитаемый заголовок для конкретного провайдера.
+     *
+     * @return string
+     */
     public function label(): string
     {
         return match ($this) {
@@ -19,6 +27,11 @@ enum AiProvider: string
         };
     }
 
+    /**
+     * Массив доступных значений перечисления.
+     *
+     * @return array<int, string>
+     */
     public static function values(): array
     {
         return array_column(self::cases(), 'value');

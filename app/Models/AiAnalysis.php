@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * AI-анализ кода с сохранённым ответом и метаданными.
+ */
 class AiAnalysis extends Model
 {
     use HasFactory;
@@ -25,6 +28,9 @@ class AiAnalysis extends Model
         'provider' => AiProvider::class,
     ];
 
+    /**
+     * Исходная отправка кода, для которой выполнен анализ.
+     */
     public function codeSubmission(): BelongsTo
     {
         return $this->belongsTo(CodeSubmission::class);

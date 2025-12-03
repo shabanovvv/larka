@@ -20,7 +20,7 @@ class MentorProfileUpdateRequest extends FormRequest
     /**
      * Правила валидации при обновлении профиля.
      *
-     * @return array<string, mixed>
+     * @return array<string, array<int, mixed>>
      */
     public function rules(): array
     {

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\CodeSubmissionStatus;
+use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,7 +15,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class CodeSubmission extends Model
 {
+    /** @use HasFactory<UserFactory> */
     use HasFactory;
+
     protected $fillable = [
         'user_id',
         'title',
@@ -29,6 +32,8 @@ class CodeSubmission extends Model
 
     /**
      * Студент, который создал отправку.
+     *
+     * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo
     {
@@ -37,6 +42,8 @@ class CodeSubmission extends Model
 
     /**
      * Ментор, закреплённый за проверкой работы.
+     *
+     * @return BelongsTo<User, $this>
      */
     public function mentor(): BelongsTo
     {
@@ -45,6 +52,8 @@ class CodeSubmission extends Model
 
     /**
      * Технологии, отмеченные студентом в задаче.
+     *
+     * @return BelongsToMany<Technology, $this>
      */
     public function technologies(): BelongsToMany
     {
@@ -53,6 +62,8 @@ class CodeSubmission extends Model
 
     /**
      * Файлы, загруженные в рамках работы.
+     *
+     * @return HasMany<SubmissionFile, $this>
      */
     public function submissionFiles(): HasMany
     {
@@ -61,6 +72,8 @@ class CodeSubmission extends Model
 
     /**
      * Выполненные AI-анализы этой работы.
+     *
+     * @return HasMany<AiAnalysis, $this>
      */
     public function aiAnalyses(): HasMany
     {
@@ -69,6 +82,8 @@ class CodeSubmission extends Model
 
     /**
      * Ревью, которые прошла отправка.
+     *
+     * @return HasMany<Review, $this>
      */
     public function reviews(): HasMany
     {

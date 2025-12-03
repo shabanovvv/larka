@@ -17,6 +17,10 @@ readonly class RoleService
 
     /**
      * Возвращает список ролей с сортировкой и пагинацией.
+     *
+     * @param int $perPage
+     * @param SortDTO $sortDTO
+     * @return LengthAwarePaginator<int, Role>
      */
     public function paginate(int $perPage, SortDTO $sortDTO): LengthAwarePaginator
     {
@@ -25,6 +29,9 @@ readonly class RoleService
 
     /**
      * Создаёт новую роль.
+     *
+     * @param array<string, mixed> $data
+     * @return Role
      */
     public function store(array $data): Role
     {
@@ -35,6 +42,10 @@ readonly class RoleService
 
     /**
      * Обновляет существующую роль.
+     *
+     * @param Role $role
+     * @param array<string, mixed> $data
+     * @return Role
      */
     public function update(Role $role, array $data): Role
     {
@@ -46,6 +57,9 @@ readonly class RoleService
 
     /**
      * Точка для преобразования входных данных.
+     *
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
      */
     private function prepareData(array $data): array
     {
@@ -54,6 +68,9 @@ readonly class RoleService
 
     /**
      * Удаляет роль.
+     *
+     * @param Role $role
+     * @return void
      */
     public function delete(Role $role): void
     {

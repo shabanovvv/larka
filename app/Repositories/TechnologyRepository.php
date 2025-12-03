@@ -22,8 +22,13 @@ class TechnologyRepository
         'name',
         'slug',
     ];
+
     /**
      * Возвращает страницу технологий с сортировкой.
+     *
+     * @param int $perPage
+     * @param SortDTO $sortDTO
+     * @return LengthAwarePaginator<int, Technology>
      */
     public function paginate(int $perPage, SortDTO $sortDTO): LengthAwarePaginator
     {
@@ -37,6 +42,9 @@ class TechnologyRepository
 
     /**
      * Создаёт технологию.
+     *
+     * @param array<string, mixed> $data
+     * @return Technology
      */
     public function create(array $data): Technology
     {
@@ -45,6 +53,10 @@ class TechnologyRepository
 
     /**
      * Обновляет технологию.
+     *
+     * @param Technology $technology
+     * @param array<string, mixed> $data
+     * @return bool
      */
     public function update(Technology $technology, array $data): bool
     {
@@ -53,6 +65,9 @@ class TechnologyRepository
 
     /**
      * Удаляет технологию.
+     *
+     * @param Technology $technology
+     * @return bool
      */
     public function delete(Technology $technology): bool
     {

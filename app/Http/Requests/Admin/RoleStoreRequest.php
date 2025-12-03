@@ -24,7 +24,7 @@ class RoleStoreRequest extends FormRequest
     /**
      * Правила валидации для создания роли.
      *
-     * @return array[]
+     * @return array<string, array<int, mixed>>
      */
     public function rules(): array
     {

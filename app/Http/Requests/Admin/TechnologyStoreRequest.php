@@ -24,7 +24,7 @@ class TechnologyStoreRequest extends FormRequest
     /**
      * Правила валидации для создания технологии.
      *
-     * @return array[]
+     * @return array<string, array<int, mixed>>
      */
     public function rules(): array
     {

@@ -25,6 +25,10 @@ class RoleRepository
 
     /**
      * Возвращает роли с пагинацией и счётчиком пользователей.
+     *
+     * @param int $perPage
+     * @param SortDTO $sortDTO
+     * @return LengthAwarePaginator<int, Role>
      */
     public function paginate(int $perPage, SortDTO $sortDTO): LengthAwarePaginator
     {
@@ -39,6 +43,9 @@ class RoleRepository
 
     /**
      * Создаёт роль.
+     *
+     * @param array<string, mixed> $data
+     * @return Role
      */
     public function create(array $data): Role
     {
@@ -47,6 +54,10 @@ class RoleRepository
 
     /**
      * Обновляет роль.
+     *
+     * @param Role $role
+     * @param array<string, mixed> $data
+     * @return bool
      */
     public function update(Role $role, array $data): bool
     {
@@ -55,6 +66,9 @@ class RoleRepository
 
     /**
      * Удаляет роль, оборачивая исключения в RuntimeException.
+     *
+     * @param Role $role
+     * @return bool
      */
     public function delete(Role $role): bool
     {

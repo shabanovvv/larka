@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class SubmissionFile extends Model
 {
+    /** @use HasFactory<UserFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -22,6 +24,8 @@ class SubmissionFile extends Model
 
     /**
      * Отправка кода, которой принадлежит файл.
+     *
+     * @return BelongsTo<CodeSubmission, $this>
      */
     public function codeSubmission(): BelongsTo
     {
@@ -30,6 +34,8 @@ class SubmissionFile extends Model
 
     /**
      * Комментарии ревью, оставленные на этот файл.
+     *
+     * @return HasMany<ReviewComment, $this>
      */
     public function reviewComments(): HasMany
     {

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  */
 class MentorProfile extends Model
 {
+    /** @use HasFactory<UserFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -25,6 +27,8 @@ class MentorProfile extends Model
 
     /**
      * Пользователь, которому принадлежит профиль.
+     *
+     * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo
     {
@@ -33,6 +37,8 @@ class MentorProfile extends Model
 
     /**
      * Технологии, в которых специализируется ментор.
+     *
+     * @return BelongsToMany<Technology, $this>
      */
     public function technologies(): BelongsToMany
     {

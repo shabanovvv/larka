@@ -25,8 +25,13 @@ class MentorProfileRepository
         'is_active',
         'created_at',
     ];
+
     /**
      * Возвращает срез профилей с сортировкой.
+     *
+     * @param int $perPage
+     * @param SortDTO $sortDTO
+     * @return LengthAwarePaginator<int, MentorProfile>
      */
     public function paginate(int $perPage, SortDTO $sortDTO): LengthAwarePaginator
     {
@@ -41,6 +46,9 @@ class MentorProfileRepository
 
     /**
      * Создаёт профиль ментора.
+     *
+     * @param array<string, mixed> $data
+     * @return MentorProfile
      */
     public function create(array $data): MentorProfile
     {
@@ -49,6 +57,10 @@ class MentorProfileRepository
 
     /**
      * Обновляет профиль ментора.
+     *
+     * @param MentorProfile $mentorProfile
+     * @param array<string, mixed> $data
+     * @return bool
      */
     public function update(MentorProfile $mentorProfile, array $data): bool
     {
@@ -57,6 +69,9 @@ class MentorProfileRepository
 
     /**
      * Удаляет профиль ментора.
+     *
+     * @param MentorProfile $mentorProfile
+     * @return bool
      */
     public function delete(MentorProfile $mentorProfile): bool
     {

@@ -24,7 +24,7 @@ class RoleUpdateRequest extends FormRequest
     /**
      * Правила валидации для обновления роли.
      *
-     * @return array[]
+     * @return array<string, array<int, mixed>>
      */
     public function rules(): array
     {

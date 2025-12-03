@@ -5,6 +5,7 @@ namespace App\Http\Requests\Admin;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Validation\Rules\Unique;
 
 /**
  * Request: обновление существующего пользователя.
@@ -25,7 +26,7 @@ class UserUpdateRequest extends FormRequest
     /**
      * Правила валидации для обновления пользователя.
      *
-     * @return array[]
+     * @return array<string, array<int, mixed>>
      */
     public function rules(): array
     {
@@ -38,6 +39,10 @@ class UserUpdateRequest extends FormRequest
         ];
     }
 }
+
+
+
+
 
 
 

@@ -24,7 +24,7 @@ class TechnologyUpdateRequest extends FormRequest
     /**
      * Правила валидации для обновления технологии.
      *
-     * @return array[]
+     * @return array<string, array<int, mixed>>
      */
     public function rules(): array
     {

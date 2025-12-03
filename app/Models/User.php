@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -54,6 +55,9 @@ class User extends Authenticatable
 
     /**
      * Роли, назначенные пользователю.
+     *
+     * @return BelongsToMany<Role>
+     * @phpstan-return BelongsToMany<Role, $this>
      */
     public function roles(): BelongsToMany
     {
@@ -62,6 +66,8 @@ class User extends Authenticatable
 
     /**
      * Профиль ментора, если пользователь ведёт ревью.
+     *
+     * @return HasOne<MentorProfile, $this>
      */
     public function mentorProfile(): HasOne
     {
@@ -70,6 +76,8 @@ class User extends Authenticatable
 
     /**
      * Работы, отправленные студентом на ревью.
+     *
+     * @return HasMany<CodeSubmission, $this>
      */
     public function codeSubmissions(): HasMany
     {
@@ -78,6 +86,8 @@ class User extends Authenticatable
 
     /**
      * Ревью, которые пользователь проводит как ментор.
+     *
+     * @return HasMany<Review, $this>
      */
     public function mentorReviews(): HasMany
     {

@@ -18,12 +18,11 @@ trait HasSorting
      */
     public function validateAndGetSorting(SortDTO $sortDTO): array
     {
-        $allowedSorts = self::ALLOWED_SORTS ?? [];
-        $defaultSort = $allowedSorts[0] ?? 'id';
+        $allowedSorts = self::ALLOWED_SORTS;
 
         $sort = in_array($sortDTO->sort, $allowedSorts)
             ? $sortDTO->sort
-            : $defaultSort;
+            : $allowedSorts[0];
 
         $direction = $sortDTO->direction === 'asc' ? 'asc' : 'desc';
 

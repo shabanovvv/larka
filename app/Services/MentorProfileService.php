@@ -14,8 +14,13 @@ readonly class MentorProfileService
 {
     public function __construct(private MentorProfileRepository $mentorProfileRepository)
     {}
+
     /**
      * Возвращает страницу профилей с учётом сортировки.
+     *
+     * @param int $perPage
+     * @param SortDTO $sortDTO
+     * @return LengthAwarePaginator<int, MentorProfile>
      */
     public function paginate(int $perPage, SortDTO $sortDTO): LengthAwarePaginator
     {
@@ -24,6 +29,9 @@ readonly class MentorProfileService
 
     /**
      * Создаёт новый профиль ментора.
+     *
+     * @param array<string, mixed> $data
+     * @return MentorProfile
      */
     public function store(array $data): MentorProfile
     {
@@ -34,6 +42,10 @@ readonly class MentorProfileService
 
     /**
      * Обновляет профиль ментора и возвращает актуальную модель.
+     *
+     * @param MentorProfile $mentorProfile
+     * @param array<string, mixed> $data
+     * @return MentorProfile
      */
     public function update(MentorProfile $mentorProfile, array $data): MentorProfile
     {
@@ -45,6 +57,9 @@ readonly class MentorProfileService
 
     /**
      * Точка для нормализации входящих данных.
+     *
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
      */
     private function prepareData(array $data): array
     {
@@ -53,6 +68,9 @@ readonly class MentorProfileService
 
     /**
      * Удаляет профиль ментора.
+     *
+     * @param MentorProfile $mentorProfile
+     * @return void
      */
     public function delete(MentorProfile $mentorProfile): void
     {

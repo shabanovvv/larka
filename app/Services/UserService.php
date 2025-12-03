@@ -18,6 +18,10 @@ readonly class UserService
 
     /**
      * Возвращает страницу пользователей с сортировкой.
+     *
+     * @param int $perPage
+     * @param SortDTO $sortDTO
+     * @return LengthAwarePaginator<int, User>
      */
     public function paginate(int $perPage, SortDTO $sortDTO): LengthAwarePaginator
     {
@@ -26,6 +30,9 @@ readonly class UserService
 
     /**
      * Создаёт нового пользователя.
+     *
+     * @param array<string, mixed> $data
+     * @return User
      */
     public function store(array $data): User
     {
@@ -36,6 +43,10 @@ readonly class UserService
 
     /**
      * Обновляет пользователя и возвращает актуальную модель.
+     *
+     * @param User $user
+     * @param array<string, mixed> $data
+     * @return User
      */
     public function update(User $user, array $data): User
     {
@@ -47,6 +58,9 @@ readonly class UserService
 
     /**
      * Нормализует данные перед сохранением (хеширует пароль).
+     *
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
      */
     private function prepareData(array $data): array
     {
@@ -63,6 +77,9 @@ readonly class UserService
 
     /**
      * Удаляет пользователя.
+     *
+     * @param User $user
+     * @return void
      */
     public function delete(User $user): void
     {

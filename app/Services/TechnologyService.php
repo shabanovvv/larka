@@ -18,6 +18,10 @@ readonly class TechnologyService
 
     /**
      * Возвращает список технологий с сортировкой.
+     *
+     * @param int $perPage
+     * @param SortDTO $sortDTO
+     * @return LengthAwarePaginator<int, Technology>
      */
     public function paginate(int $perPage, SortDTO $sortDTO): LengthAwarePaginator
     {
@@ -26,6 +30,9 @@ readonly class TechnologyService
 
     /**
      * Создаёт новую технологию.
+     *
+     * @param array<string, mixed> $data
+     * @return Technology
      */
     public function store(array $data): Technology
     {
@@ -36,6 +43,10 @@ readonly class TechnologyService
 
     /**
      * Обновляет технологию и возвращает свежую модель.
+     *
+     * @param Technology $technology
+     * @param array<string, mixed> $data
+     * @return Technology
      */
     public function update(Technology $technology, array $data): Technology
     {
@@ -47,6 +58,9 @@ readonly class TechnologyService
 
     /**
      * Дополняет данные slug'ом, если его не передали.
+     *
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
      */
     private function prepareData(array $data): array
     {
@@ -59,6 +73,9 @@ readonly class TechnologyService
 
     /**
      * Удаляет технологию.
+     *
+     * @param Technology $technology
+     * @return void
      */
     public function delete(Technology $technology): void
     {

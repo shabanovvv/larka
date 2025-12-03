@@ -25,7 +25,7 @@ class UserStoreRequest extends FormRequest
     /**
      * Правила валидации для создания пользователя.
      *
-     * @return array[]
+     * @return array<string, array<int, mixed>>
      */
     public function rules(): array
     {
@@ -36,6 +36,10 @@ class UserStoreRequest extends FormRequest
         ];
     }
 }
+
+
+
+
 
 
 

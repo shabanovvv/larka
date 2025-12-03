@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\ReviewStatus;
+use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Review extends Model
 {
+    /** @use HasFactory<UserFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -29,6 +31,8 @@ class Review extends Model
 
     /**
      * Работа, которую проверяет ментор.
+     *
+     * @return BelongsTo<CodeSubmission, $this>
      */
     public function codeSubmission(): BelongsTo
     {
@@ -37,6 +41,8 @@ class Review extends Model
 
     /**
      * Ментор, выполняющий ревью.
+     *
+     * @return BelongsTo<User, $this>
      */
     public function mentor(): BelongsTo
     {
@@ -45,6 +51,8 @@ class Review extends Model
 
     /**
      * Комментарии ментора по конкретным файлам/строкам.
+     *
+     * @return HasMany<ReviewComment, $this>
      */
     public function reviewComments(): HasMany
     {

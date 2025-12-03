@@ -23,8 +23,13 @@ class UserRepository
         'email',
         'created_at',
     ];
+
     /**
      * Возвращает пользователей с пагинацией и сортировкой.
+     *
+     * @param int $perPage
+     * @param SortDTO $sortDTO
+     * @return LengthAwarePaginator<int, User>
      */
     public function paginate(int $perPage, SortDTO $sortDTO): LengthAwarePaginator
     {
@@ -39,6 +44,9 @@ class UserRepository
 
     /**
      * Создаёт пользователя.
+     *
+     * @param array<string, mixed> $data
+     * @return User
      */
     public function create(array $data): User
     {
@@ -47,6 +55,10 @@ class UserRepository
 
     /**
      * Обновляет пользователя.
+     *
+     * @param User $user
+     * @param array<string, mixed> $data
+     * @return bool
      */
     public function update(User $user, array $data): bool
     {
@@ -55,6 +67,9 @@ class UserRepository
 
     /**
      * Удаляет пользователя.
+     *
+     * @param User $user
+     * @return bool
      */
     public function delete(User $user): bool
     {

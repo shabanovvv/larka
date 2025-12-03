@@ -2,6 +2,9 @@
 
 namespace App\Enums;
 
+/**
+ * Статусы процесса менторского ревью кода.
+ */
 enum ReviewStatus: string
 {
     case PENDING = 'pending';        // Ожидает назначения ментора
@@ -13,6 +16,11 @@ enum ReviewStatus: string
     case REJECTED = 'rejected';      // Ревью отклонено (плохое качество кода)
     case CANCELLED = 'cancelled';    // Ревью отменено
 
+    /**
+     * Текстовая версия статуса для вывода в интерфейсе.
+     *
+     * @return string
+     */
     public function label(): string
     {
         return match ($this) {
@@ -27,6 +35,11 @@ enum ReviewStatus: string
         };
     }
 
+    /**
+     * Список значений (string), который удобно использовать в валидации.
+     *
+     * @return array<int, string>
+     */
     public static function values(): array
     {
         return array_column(self::cases(), 'value');

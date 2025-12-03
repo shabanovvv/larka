@@ -2,12 +2,17 @@
 
 namespace App\Models;
 
+use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * Замечание в ревью, привязанное к файлу и строке.
+ */
 class ReviewComment extends Model
 {
+    /** @use HasFactory<UserFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -17,11 +22,21 @@ class ReviewComment extends Model
         'comment',
     ];
 
+    /**
+     * Ревью, к которому относится комментарий.
+     *
+     * @return BelongsTo<Review, $this>
+     */
     public function review(): BelongsTo
     {
         return $this->belongsTo(Review::class);
     }
 
+    /**
+     * Файл, к которому привязано замечание.
+     *
+     * @return BelongsTo<SubmissionFile, $this>
+     */
     public function submissionFile(): BelongsTo
     {
         return $this->belongsTo(SubmissionFile::class, 'file_id');

@@ -3,15 +3,21 @@
 namespace App\Models;
 
 use App\Enums\CodeSubmissionStatus;
+use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * Отправка решения студентом для последующего ревью.
+ */
 class CodeSubmission extends Model
 {
+    /** @use HasFactory<UserFactory> */
     use HasFactory;
+
     protected $fillable = [
         'user_id',
         'title',
@@ -24,31 +30,61 @@ class CodeSubmission extends Model
         'status' => CodeSubmissionStatus::class,
     ];
 
+    /**
+     * Студент, который создал отправку.
+     *
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * Ментор, закреплённый за проверкой работы.
+     *
+     * @return BelongsTo<User, $this>
+     */
     public function mentor(): BelongsTo
     {
         return $this->belongsTo(User::class, 'mentor_id');
     }
 
+    /**
+     * Технологии, отмеченные студентом в задаче.
+     *
+     * @return BelongsToMany<Technology, $this>
+     */
     public function technologies(): BelongsToMany
     {
         return $this->belongsToMany(Technology::class);
     }
 
+    /**
+     * Файлы, загруженные в рамках работы.
+     *
+     * @return HasMany<SubmissionFile, $this>
+     */
     public function submissionFiles(): HasMany
     {
         return $this->hasMany(SubmissionFile::class);
     }
 
+    /**
+     * Выполненные AI-анализы этой работы.
+     *
+     * @return HasMany<AiAnalysis, $this>
+     */
     public function aiAnalyses(): HasMany
     {
         return $this->hasMany(AiAnalysis::class);
     }
 
+    /**
+     * Ревью, которые прошла отправка.
+     *
+     * @return HasMany<Review, $this>
+     */
     public function reviews(): HasMany
     {
         return $this->hasMany(Review::class);

@@ -5,7 +5,7 @@ use App\Http\Controllers\Admin\MentorProfileController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\TechnologyController;
 use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Api\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {

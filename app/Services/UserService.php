@@ -29,6 +29,15 @@ readonly class UserService
     }
 
     /**
+     * @param int $id
+     * @return User
+     */
+    public function findById(int $id): User
+    {
+        $this->userRepository->findById($id);
+    }
+
+    /**
      * Создаёт нового пользователя.
      *
      * @param array<string, mixed> $data

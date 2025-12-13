@@ -10,6 +10,8 @@
 </template>
 
 <script>
+import http from '@/http';
+
 export default {
     data() {
         return {
@@ -18,9 +20,19 @@ export default {
         }
     },
     methods: {
-        login() {
-            // Заглушка для демонстрации
-            alert('Форма входа (будет реализовано позже)');
+        async login() {
+            try {
+                await http.post('/api/auth/login', {
+                    email: this.email,
+                    password: this.password,
+                }, {
+                    headers: { Accept: 'application/json' }
+                });
+                this.$emit('auth-changed');
+                this.$router.push('/profile');
+            } catch (error) {
+                console.error('Login failed', error.response?.data ?? error);
+            }
         }
     }
 }

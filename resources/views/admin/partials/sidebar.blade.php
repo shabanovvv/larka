@@ -42,6 +42,14 @@
 
     <div class="small">
         <div>Вы вошли как: <strong>Администратор</strong></div>
-        {{-- сюда позже можно добавить ссылку "Выйти" --}}
+        {{-- Ссылка для выхода --}}
+        <form method="POST" action="{{ route('logout') }}" id="logout-form">
+            @csrf
+            <a href="#"
+               onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+               class="btn btn-outline-light btn-sm w-100">
+                <i class="fas fa-sign-out-alt"></i> Выйти
+            </a>
+        </form>
     </div>
 </aside>

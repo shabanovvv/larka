@@ -9,19 +9,26 @@
 </template>
 
 <script>
-import { API_URL } from '../config.js';
+import http from '@/http';
 
 export default {
     data() {
         return {
-            user: null
+            user: null,
+            error: null
         }
     },
     async mounted() {
-        // Заглушка - в реальном приложении брать ID из авторизации
-        const response = await fetch(API_URL + '/api/user/1');
-        const data = await response.json();
-        this.user = data.user;
+        try {
+            const { data } = await http.get('/api/profile');
+            this.user = data.user ?? data;
+        } catch (error) {
+            if (error.response?.status === 401) {
+                this.$router.push('/login');
+            } else {
+                this.error = 'Не удалось загрузить профиль';
+            }
+        }
     }
 }
 </script>

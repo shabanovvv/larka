@@ -43,6 +43,15 @@ class UserRepository
     }
 
     /**
+     * @param int $id
+     * @return User
+     */
+    public function findById(int $id): User
+    {
+        return User::query()->findOrFail($id);
+    }
+
+    /**
      * Создаёт пользователя.
      *
      * @param array<string, mixed> $data

@@ -14,7 +14,8 @@ import http from '@/http';
 export default {
     data() {
         return {
-            user: null
+            user: null,
+            error: null
         }
     },
     async mounted() {

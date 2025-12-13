@@ -12,13 +12,14 @@
         </nav>
 
         <main class="p-4">
-            <router-view />
+            <router-view @auth-changed="checkAuth" />
         </main>
     </div>
 </template>
 
 <script>
 import http from '@/http';
+
 export default {
     data: () => ({
         isAuthenticated: false,
@@ -45,6 +46,7 @@ export default {
                 });
                 this.isAuthenticated = false;
                 this.user = null;
+                await this.checkAuth();
                 this.$router.push('/login');
             } catch (error) {
                 console.error('Logout failed', error.response?.data ?? error);

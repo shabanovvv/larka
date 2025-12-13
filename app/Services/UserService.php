@@ -34,7 +34,7 @@ readonly class UserService
      */
     public function findById(int $id): User
     {
-        $this->userRepository->findById($id);
+        return $this->userRepository->findById($id);
     }
 
     /**

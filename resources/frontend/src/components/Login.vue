@@ -28,6 +28,7 @@ export default {
                 }, {
                     headers: { Accept: 'application/json' }
                 });
+                this.$emit('auth-changed');
                 this.$router.push('/profile');
             } catch (error) {
                 console.error('Login failed', error.response?.data ?? error);

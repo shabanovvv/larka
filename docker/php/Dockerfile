@@ -23,7 +23,7 @@ RUN apk update && apk add --no-cache \
     libzip-dev \
     linux-headers
 
-# Install PHP extensions (убираем sockets из основного списка)
+# Install PHP extensions
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp && \
     docker-php-ext-install \
         pdo_mysql \
@@ -37,8 +37,16 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp && \
 # Устанавливаем sockets отдельно с дополнительными флагами
 RUN docker-php-ext-install sockets
 
+# Install Xdebug for coverage
+RUN apk add --no-cache $PHPIZE_DEPS \
+    && pecl install xdebug \
+    && docker-php-ext-enable xdebug \
+    && apk del $PHPIZE_DEPS
+
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+COPY ./xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 
 # Install Node.js
 RUN apk add --no-cache nodejs npm

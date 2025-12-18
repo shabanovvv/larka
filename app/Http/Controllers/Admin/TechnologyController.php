@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\DTO\SortDTO;
+use App\DTO\PaginateDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\TechnologyStoreRequest;
 use App\Http\Requests\Admin\TechnologyUpdateRequest;
@@ -31,10 +31,12 @@ class TechnologyController extends Controller
      */
     public function index(Request $request): View
     {
-        $sortDTO = SortDTO::fromRequest($request);
+        $paginateDTO = PaginateDTO::fromRequest($request);
 
         return view('admin.technologies.index', [
-            'technologies' => $this->technologyService->paginate(20, $sortDTO),
+            'technologies' => $this->technologyService
+                ->paginate($paginateDTO)
+                ->appends($request->query()),
         ]);
     }
 

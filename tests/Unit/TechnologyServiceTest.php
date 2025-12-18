@@ -3,45 +3,54 @@
 namespace Tests\Unit;
 
 use App\DTO\SortDTO;
+use App\DTO\PaginateDTO;
 use App\Models\Technology;
-use App\Repositories\TechnologyRepository;
+use App\Repositories\EloquentTechnologyRepository;
 use App\Services\TechnologyService;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Mockery;
+use Illuminate\Support\Facades\Cache;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
 class TechnologyServiceTest extends TestCase
 {
-    private TechnologyRepository $repository;
+    /** @var MockObject&EloquentTechnologyRepository */
+    private $repository;
     private TechnologyService $service;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->repository = Mockery::mock(TechnologyRepository::class);
-        $this->service = new TechnologyService($this->repository);
-    }
+        // Для юнит-тестов используем in-memory кэш, чтобы не зависеть от драйвера/сериализации.
+        config(['cache.default' => 'array']);
+        Cache::flush();
 
-    protected function tearDown(): void
-    {
-        Mockery::close();
-        parent::tearDown();
+        $this->repository = $this->createMock(EloquentTechnologyRepository::class);
+        $this->service = new TechnologyService($this->repository);
     }
 
     public function test_paginate(): void
     {
-        $perPage = 10;
-        $sortDTO = new SortDTO('name', 'asc');
-        $paginator = new LengthAwarePaginator([], 0, $perPage);
+        $paginateDTO = new PaginateDTO(
+            1,
+            10,
+            new SortDTO('name', 'asc'),
+        );
+        $paginator = new LengthAwarePaginator([], 0, $paginateDTO->perPage);
 
-        $this->repository->shouldReceive('paginate')
-            ->once()
-            ->with($perPage, $sortDTO)
-            ->andReturn($paginator);
+        $this->repository
+            ->method('validateAndGetSorting')
+            ->willReturn(['name', 'desc']);
 
-        $result = $this->service->paginate($perPage, $sortDTO);
+        $this->repository
+            ->expects($this->once())
+            ->method('paginate')
+            ->with($paginateDTO)
+            ->willReturn($paginator);
+
+        $result = $this->service->paginate($paginateDTO);
 
         $this->assertSame($paginator, $result);
     }
@@ -51,10 +60,11 @@ class TechnologyServiceTest extends TestCase
     {
         $technology = new Technology($expected);
 
-        $this->repository->shouldReceive('create')
-            ->once()
+        $this->repository
+            ->expects($this->once())
+            ->method('create')
             ->with($expected)
-            ->andReturn($technology);
+            ->willReturn($technology);
 
         $result = $this->service->store($input);
 
@@ -64,18 +74,19 @@ class TechnologyServiceTest extends TestCase
     #[DataProvider('updateDataProvider')]
     public function test_update(array $input, array $expected): void
     {
-        $technology = Mockery::mock(Technology::class)->makePartial();
-        $updated = Mockery::mock(Technology::class)->makePartial();
-        $updated->slug = $expected['slug'];
+        $technology = $this->createPartialMock(Technology::class, ['refresh']);
+        $updated = new Technology($expected);
 
-        $this->repository->shouldReceive('update')
-            ->once()
+        $this->repository
+            ->expects($this->once())
+            ->method('update')
             ->with($technology, $expected)
-            ->andReturnTrue();
+            ->willReturn(true);
 
-        $technology->shouldReceive('refresh')
-            ->once()
-            ->andReturn($updated);
+        $technology
+            ->expects($this->once())
+            ->method('refresh')
+            ->willReturn($updated);
 
         $result = $this->service->update($technology, $input);
 
@@ -84,14 +95,14 @@ class TechnologyServiceTest extends TestCase
 
     public function test_delete(): void
     {
-        $technology = Mockery::mock(Technology::class)->makePartial();
+        $technology = $this->createMock(Technology::class);
 
-        $this->repository->shouldReceive('delete')
-            ->once()
+        $this->repository
+            ->expects($this->once())
+            ->method('delete')
             ->with($technology)
-            ->andReturnTrue();
+            ->willReturn(true);
 
-        $this->expectNotToPerformAssertions();
         $this->service->delete($technology);
     }
 

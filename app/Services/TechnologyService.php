@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
-use App\DTO\SortDTO;
+use App\DTO\PaginateDTO;
 use App\Models\Technology;
-use App\Repositories\TechnologyRepository;
+use App\Repositories\TechnologyRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Str;
 
@@ -13,19 +13,18 @@ use Illuminate\Support\Str;
  */
 readonly class TechnologyService
 {
-    public function __construct(private TechnologyRepository $technologyRepository)
+    public function __construct(private TechnologyRepositoryInterface $technologyRepository)
     {}
 
     /**
      * Возвращает список технологий с сортировкой.
      *
-     * @param int $perPage
-     * @param SortDTO $sortDTO
+     * @param PaginateDTO $paginateDTO
      * @return LengthAwarePaginator<int, Technology>
      */
-    public function paginate(int $perPage, SortDTO $sortDTO): LengthAwarePaginator
+    public function paginate(PaginateDTO $paginateDTO): LengthAwarePaginator
     {
-        return $this->technologyRepository->paginate($perPage, $sortDTO);
+        return $this->technologyRepository->paginate($paginateDTO);
     }
 
     /**

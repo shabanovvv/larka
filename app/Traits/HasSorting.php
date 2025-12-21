@@ -22,7 +22,7 @@ trait HasSorting
 
         $sort = in_array($sortDTO->sort, $allowedSorts)
             ? $sortDTO->sort
-            : $allowedSorts[0];
+            : $allowedSorts[0] ?? 'id';
 
         $direction = $sortDTO->direction === 'asc' ? 'asc' : 'desc';
 

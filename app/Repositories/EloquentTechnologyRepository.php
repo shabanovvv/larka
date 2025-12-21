@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\DTO\SortDTO;
+use App\DTO\PaginateDTO;
 use App\Models\Technology;
 use App\Traits\HasSorting;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -10,7 +10,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 /**
  * Репозиторий доступа к технологиям.
  */
-class TechnologyRepository
+class EloquentTechnologyRepository implements TechnologyRepositoryInterface
 {
     use HasSorting;
 
@@ -26,18 +26,16 @@ class TechnologyRepository
     /**
      * Возвращает страницу технологий с сортировкой.
      *
-     * @param int $perPage
-     * @param SortDTO $sortDTO
+     * @param PaginateDTO $paginateDTO
      * @return LengthAwarePaginator<int, Technology>
      */
-    public function paginate(int $perPage, SortDTO $sortDTO): LengthAwarePaginator
+    public function paginate(PaginateDTO $paginateDTO): LengthAwarePaginator
     {
-        [$sort, $direction] = $this->validateAndGetSorting($sortDTO);
+        [$sort, $direction] = $this->validateAndGetSorting($paginateDTO->sortDTO);
 
         return Technology::query()
             ->orderBy($sort, $direction)
-            ->paginate($perPage)
-            ->withQueryString();
+            ->paginate($paginateDTO->perPage, ['*'], 'page', $paginateDTO->page);
     }
 
     /**

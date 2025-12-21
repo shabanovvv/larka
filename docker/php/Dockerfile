@@ -37,10 +37,11 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp && \
 # Устанавливаем sockets отдельно с дополнительными флагами
 RUN docker-php-ext-install sockets
 
-# Install Xdebug for coverage
+# Install PECL extensions (xdebug + phpredis)
 RUN apk add --no-cache $PHPIZE_DEPS \
+    && pecl install redis \
     && pecl install xdebug \
-    && docker-php-ext-enable xdebug \
+    && docker-php-ext-enable redis xdebug \
     && apk del $PHPIZE_DEPS
 
 # Install Composer

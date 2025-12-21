@@ -3,9 +3,9 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Гарантирует, что каждый HTTP-запрос и ответ получают единый correlation ID для трассировки.
@@ -15,9 +15,9 @@ class EnsureCorrelationId
     /**
      * @param Request $request
      * @param Closure $next
-     * @return JsonResponse
+     * @return Response
      */
-    public function handle(Request $request, Closure $next): JsonResponse
+    public function handle(Request $request, Closure $next): Response
     {
         $config = config('correlation');
         $header = $config['header'];

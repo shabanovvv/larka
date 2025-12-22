@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Console\Commands;
 
@@ -9,7 +10,9 @@ use Symfony\Component\Console\Command\Command as CommandAlias;
 
 class CodeSubmissionForgotCommand extends Command
 {
-    const DAYS = 5;
+    private const int DAYS = 5;
+    private const array TABLE_COLUMNS = ['ID', 'Заголовок', 'Статус', 'Студент', 'Дата создания'];
+
     protected $signature = 'codesubmission:forgot {days?}';
 
     protected $description = 'Находит не проверенные работы студентов, которым более N дней';
@@ -23,6 +26,7 @@ class CodeSubmissionForgotCommand extends Command
         }
 
         try {
+            $days = $this->validateDays($days);
             $submissions = $codeSubmissionService->findForgotByDays($days);
         } catch (InvalidArgumentException $exception) {
             $this->error($exception->getMessage());
@@ -51,8 +55,23 @@ class CodeSubmissionForgotCommand extends Command
         })->toArray();
 
         $this->warn("Найдено {$submissions->count()} непроверенных работ старше {$days} дней:");
-        $this->table(['ID', 'Заголовок', 'Статус', 'Студент', 'Дата создания'], $tableData);
+        $this->table(self::TABLE_COLUMNS, $tableData);
 
         return self::SUCCESS;
+    }
+
+    private function validateDays(mixed $days): int
+    {
+        if (!is_numeric($days)) {
+            throw new InvalidArgumentException('Параметр "days" должен быть числом');
+        }
+
+        $days = (int)$days;
+
+        if ($days <= 0) {
+            throw new InvalidArgumentException('Параметр "days" должен быть положительным числом');
+        }
+
+        return $days;
     }
 }

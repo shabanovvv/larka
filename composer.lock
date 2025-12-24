@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5638b3cc7ea3201d5226ac707583b3bd",
+    "content-hash": "01f6593794a1537bb8cb4cb0122a116f",
     "packages": [
         {
             "name": "brick/math",
@@ -3352,6 +3352,41 @@
                 "source": "https://github.com/ramsey/uuid/tree/4.9.1"
             },
             "time": "2025-09-04T20:59:21+00:00"
+        },
+        {
+            "name": "salavey/ai_code_reviewer",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "../laravel_pckg",
+                "reference": "9d08c200855aad73720b31ca4b190d4afbaa63ff"
+            },
+            "require": {
+                "illuminate/http": "^12.0",
+                "illuminate/support": "^12.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Salavey\\AiCodeReviewer\\ServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Salavey\\AiCodeReviewer\\": "src/"
+                }
+            },
+            "authors": [
+                {
+                    "name": "Vyacheslav Shabanov",
+                    "email": "saveliy@mail.ru"
+                }
+            ],
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "symfony/clock",
@@ -8828,12 +8863,14 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": {
+        "salavey/ai_code_reviewer": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": "^8.2"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.9.0"
+    "plugin-api-version": "2.6.0"
 }

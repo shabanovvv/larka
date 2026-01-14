@@ -20,10 +20,8 @@ class DatabaseSeeder extends Seeder
             TechnologySeeder::class,
             MentorProfileSeeder::class,
             CodeSubmissionSeeder::class,
-            SubmissionFileSeeder::class,
             AiAnalysisSeeder::class,
             ReviewSeeder::class,
-            ReviewCommentSeeder::class,
         ]);
     }
 }

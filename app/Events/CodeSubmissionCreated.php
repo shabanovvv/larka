@@ -9,6 +9,6 @@ use Illuminate\Queue\SerializesModels;
 readonly class CodeSubmissionCreated
 {
     use Dispatchable, SerializesModels;
-    public function __construct(private CodeSubmission $codeSubmission)
+    public function __construct(public CodeSubmission $codeSubmission)
     {}
 }

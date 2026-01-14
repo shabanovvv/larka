@@ -1,0 +1,131 @@
+.auth-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 18px;
+    box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
+    border: 1px solid #e5e7eb;
+    max-width: 520px;
+    margin: 0 auto;
+}
+
+.auth-header {
+    margin-bottom: 14px;
+}
+
+.auth-title {
+    margin: 0;
+    font-size: 18px;
+    line-height: 1.2;
+    color: #111827;
+}
+
+.auth-subtitle {
+    margin: 6px 0 0;
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.auth-form {
+    display: grid;
+    gap: 12px;
+}
+
+.auth-field {
+    display: grid;
+    gap: 6px;
+}
+
+.auth-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.auth-input {
+    width: 100%;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 10px 12px;
+    background: #ffffff;
+    outline: none;
+    font-size: 14px;
+}
+
+.auth-input:focus {
+    border-color: #93c5fd;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
+}
+
+.auth-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-top: 4px;
+}
+
+.auth-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    background: #2563eb;
+    color: #ffffff;
+    box-shadow: 0 10px 18px rgba(37, 99, 235, 0.18);
+}
+
+.auth-btn:hover:enabled {
+    background: #1d4ed8;
+}
+
+.auth-btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.auth-link {
+    color: #2563eb;
+    text-decoration: none;
+    font-size: 14px;
+    padding: 8px 0;
+}
+
+.auth-link:hover {
+    text-decoration: underline;
+}
+
+.auth-alert {
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 13px;
+    border: 1px solid transparent;
+}
+
+.auth-alert--error {
+    background: #fef2f2;
+    border-color: #fecaca;
+    color: #991b1b;
+}
+
+.auth-spinner {
+    width: 14px;
+    height: 14px;
+    border-radius: 999px;
+    border: 2px solid rgba(255, 255, 255, 0.45);
+    border-top-color: rgba(255, 255, 255, 1);
+    animation: auth-spin 0.9s linear infinite;
+}
+
+@keyframes auth-spin {
+    to { transform: rotate(360deg); }
+}
+
+
+
+

@@ -5,25 +5,17 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 const http = axios.create({
     baseURL: API_BASE_URL,
     withCredentials: true,
+    // Для SPA на другом origin (localhost:3000 -> localhost:80) axios по умолчанию
+    // не добавляет XSRF заголовок. Включаем явную отправку XSRF токена.
+    withXSRFToken: true,
+    xsrfCookieName: 'XSRF-TOKEN',
+    xsrfHeaderName: 'X-XSRF-TOKEN',
     headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
         'X-Requested-With': 'XMLHttpRequest',
     },
 });
-
-const getCookie = (name) =>
-    document.cookie
-        .split('; ')
-        .find((row) => row.startsWith(`${name}=`))
-        ?.split('=')[1];
-
-const applyXsrfHeader = () => {
-    const token = getCookie('XSRF-TOKEN');
-    if (token) {
-        http.defaults.headers.common['X-XSRF-TOKEN'] = decodeURIComponent(token);
-    }
-};
 
 let csrfPromise = null;
 
@@ -32,11 +24,10 @@ const getCsrfToken = async () => {
         return csrfPromise;
     }
 
-    csrfPromise = axios
-        .get(`${API_BASE_URL}/api/csrf-cookie`, { withCredentials: true })
+    csrfPromise = http
+        .get('/api/csrf-cookie')
         .then(() => {
             console.log('CSRF получен');
-            applyXsrfHeader();
         })
         .catch((error) => {
             console.error('Ошибка получения CSRF:', error);

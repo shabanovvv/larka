@@ -24,6 +24,14 @@ class EloquentTechnologyRepository implements TechnologyRepositoryInterface
     ];
 
     /**
+     * Возвращает все значения
+     */
+    public function all(): array
+    {
+        return Technology::all()->toArray();
+    }
+
+    /**
      * Возвращает страницу технологий с сортировкой.
      *
      * @param PaginateDTO $paginateDTO

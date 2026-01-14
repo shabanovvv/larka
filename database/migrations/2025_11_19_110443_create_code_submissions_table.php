@@ -23,25 +23,12 @@ return new class extends Migration
         Schema::create('code_submissions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->string('title');
-            $table->text('description')->nullable();
+            $table->text('code')->nullable();
             $table->string('status', 32)->default('draft');
             $table->foreignId('mentor_id')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
 
             $table->index(['status']);
-        });
-
-        /**
-         * Файлы, загруженные пользователем:
-         * Позволяет хранить исходный код целиком.
-         */
-        Schema::create('submission_files', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('code_submission_id')->constrained()->cascadeOnDelete();
-            $table->string('filename')->nullable();
-            $table->longText('content');
-            $table->timestamps();
         });
 
         /**
@@ -63,7 +50,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('code_submission_technology');
-        Schema::dropIfExists('submission_files');
         Schema::dropIfExists('code_submissions');
     }
 };

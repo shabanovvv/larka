@@ -11,8 +11,7 @@
         "laravel/sanctum": "^4.2",
         "laravel/tinker": "^2.10.1",
         "salavey/ai_code_reviewer": "@dev",
-        "laravel/tinker": "^2.10.1",
-        "vladimir-yuldashev/laravel-queue-rabbitmq": "^14.4"
+        "vladimir-yuldashev/laravel-queue-rabbitmq": "*"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.16",
@@ -94,7 +93,7 @@
     "repositories": [
         {
             "type": "path",
-            "url": "../laravel_pckg"
+            "url": "./packages/ai_code_reviewer"
         }
     ]
 }

@@ -12,15 +12,25 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Отправка решения студентом для последующего ревью.
+ *
+ * @property int $id
+ * @property int $user_id
+ * @property int|null $mentor_id
+ * @property string|null $code
+ * @property CodeSubmissionStatus $status
  */
 class CodeSubmission extends Model
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory;
 
+    protected $attributes = [
+        'status' => CodeSubmissionStatus::WAITING->value,
+    ];
+
     protected $fillable = [
         'user_id',
-        'title',
+        'code',
         'description',
         'status',
         'mentor_id',
@@ -58,16 +68,6 @@ class CodeSubmission extends Model
     public function technologies(): BelongsToMany
     {
         return $this->belongsToMany(Technology::class);
-    }
-
-    /**
-     * Файлы, загруженные в рамках работы.
-     *
-     * @return HasMany<SubmissionFile, $this>
-     */
-    public function submissionFiles(): HasMany
-    {
-        return $this->hasMany(SubmissionFile::class);
     }
 
     /**

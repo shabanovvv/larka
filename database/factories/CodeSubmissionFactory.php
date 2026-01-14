@@ -12,7 +12,7 @@ class CodeSubmissionFactory extends Factory
     {
         return [
             'title' => fake()->sentence(),
-            'description' => fake()->realText(),
+            'code' => fake()->realText(),
             'status' => fake()->randomElement(CodeSubmissionStatus::values()),
         ];
     }

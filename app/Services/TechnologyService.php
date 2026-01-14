@@ -17,6 +17,14 @@ readonly class TechnologyService
     {}
 
     /**
+     * Возвращает все значения
+     */
+    public function all(): array
+    {
+        return $this->technologyRepository->all();
+    }
+
+    /**
      * Возвращает список технологий с сортировкой.
      *
      * @param PaginateDTO $paginateDTO

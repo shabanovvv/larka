@@ -1,17 +1,31 @@
 <template>
-    <div>
-        <nav>
-            <router-link to="/">Главная</router-link>
-            <router-link v-if="!isAuthenticated" to="/login">Вход</router-link>
-            <router-link v-if="!isAuthenticated" to="/register">Регистрация</router-link>
+    <div class="layout">
+        <nav class="nav">
+            <div class="nav__inner">
+                <router-link to="/" class="nav__brand">AI REVIEWER</router-link>
 
-            <template v-else>
-                <router-link to="/profile">Профиль</router-link>
-                <button @click="logout">Выйти</button>
-            </template>
+                <div class="nav__links">
+                    <router-link to="/" class="nav__link">Главная</router-link>
+                    <router-link v-if="isAuthenticated" to="/profile" class="nav__link">Профиль</router-link>
+                    <router-link v-if="isAuthenticated" to="/code-submission" class="nav__link">AI анализ</router-link>
+                </div>
+
+                <div class="nav__actions">
+                    <router-link v-if="!isAuthenticated" to="/login" class="nav__link nav__link--button">
+                        Вход
+                    </router-link>
+                    <router-link v-if="!isAuthenticated" to="/register" class="nav__link nav__link--button nav__link--ghost">
+                        Регистрация
+                    </router-link>
+
+                    <button v-else class="nav__button" @click="logout">
+                        Выйти
+                    </button>
+                </div>
+            </div>
         </nav>
 
-        <main class="p-4">
+        <main class="content">
             <router-view @auth-changed="checkAuth" />
         </main>
     </div>

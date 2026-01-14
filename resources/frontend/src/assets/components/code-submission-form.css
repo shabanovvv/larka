@@ -1,0 +1,221 @@
+.cs-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 18px 18px 16px;
+    box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
+    border: 1px solid #e5e7eb;
+}
+
+.cs-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.cs-title {
+    margin: 0;
+    font-size: 18px;
+    line-height: 1.2;
+    color: #111827;
+}
+
+.cs-subtitle {
+    margin: 6px 0 0;
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.cs-form {
+    display: grid;
+    gap: 14px;
+}
+
+.cs-field {
+    display: grid;
+    gap: 8px;
+}
+
+.cs-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.cs-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.cs-help,
+.cs-meta {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.cs-select {
+    width: 100%;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 10px 12px;
+    background: #ffffff;
+    outline: none;
+}
+
+.cs-select:focus {
+    border-color: #93c5fd;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
+}
+
+.cs-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.cs-chip {
+    font-size: 12px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: #eff6ff;
+    color: #1d4ed8;
+    border: 1px solid rgba(29, 78, 216, 0.2);
+}
+
+.cs-textarea {
+    width: 100%;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 12px;
+    resize: vertical;
+    outline: none;
+    background: #0b1220;
+    color: #e5e7eb;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.cs-textarea::placeholder {
+    color: rgba(229, 231, 235, 0.55);
+}
+
+.cs-textarea:focus {
+    border-color: #93c5fd;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
+}
+
+.cs-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.cs-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    background: #2563eb;
+    color: #ffffff;
+    box-shadow: 0 10px 18px rgba(37, 99, 235, 0.18);
+}
+
+.cs-btn:hover:enabled {
+    background: #1d4ed8;
+}
+
+.cs-btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.cs-btn--ghost {
+    background: #ffffff;
+    color: #111827;
+    border-color: #e5e7eb;
+    box-shadow: none;
+}
+
+.cs-btn--ghost:hover:enabled {
+    background: #f9fafb;
+}
+
+.cs-alert {
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 13px;
+    border: 1px solid transparent;
+}
+
+.cs-alert--error {
+    background: #fef2f2;
+    border-color: #fecaca;
+    color: #991b1b;
+}
+
+.cs-alert--success {
+    background: #ecfdf5;
+    border-color: #bbf7d0;
+    color: #065f46;
+}
+
+.cs-muted {
+    color: rgba(6, 95, 70, 0.85);
+}
+
+.cs-code {
+    background: rgba(17, 24, 39, 0.08);
+    padding: 2px 6px;
+    border-radius: 6px;
+}
+
+.cs-poll {
+    margin-top: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: rgba(6, 95, 70, 0.85);
+}
+
+.cs-poll__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: rgba(16, 185, 129, 0.9);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.35);
+    animation: cs-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes cs-pulse {
+    0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.35); opacity: 0.8; }
+    70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); opacity: 1; }
+    100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); opacity: 0.9; }
+}
+
+.cs-spinner {
+    width: 14px;
+    height: 14px;
+    border-radius: 999px;
+    border: 2px solid rgba(255, 255, 255, 0.45);
+    border-top-color: rgba(255, 255, 255, 1);
+    animation: cs-spin 0.9s linear infinite;
+}
+
+@keyframes cs-spin {
+    to { transform: rotate(360deg); }
+}
+
+
+
+

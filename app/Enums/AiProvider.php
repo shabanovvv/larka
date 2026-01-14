@@ -10,6 +10,7 @@ enum AiProvider: string
     case OPENAI = 'openai';
     case ANTHROPIC = 'anthropic';
     case GEMINI = 'gemini';
+    case DEEPSEEK = 'deepseek';
     case CUSTOM = 'custom';
 
     /**
@@ -23,6 +24,7 @@ enum AiProvider: string
             self::OPENAI => 'OpenAI GPT',
             self::ANTHROPIC => 'Anthropic Claude',
             self::GEMINI => 'Google Gemini',
+            self::DEEPSEEK => 'DeepSeek',
             self::CUSTOM => 'Custom Model',
         };
     }

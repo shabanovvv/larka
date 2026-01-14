@@ -11,10 +11,23 @@ use LogicException;
 readonly class CacheTechnologyRepository implements TechnologyRepositoryInterface
 {
     private const CACHE_TTL_SECONDS = 60;
+    private const CACHE_ALL = 'technologies_all';
     private const CACHE_TAG_PAGINATE = 'technologies_paginate';
 
     public function __construct(private TechnologyRepositoryInterface $technologyRepository)
     {
+    }
+
+    /**
+     * Возвращает все значения
+     */
+    public function all(): array
+    {
+        return Cache::remember(
+            self::CACHE_ALL,
+            self::CACHE_TTL_SECONDS,
+            fn() => $this->technologyRepository->all()
+        );
     }
 
     public function paginate(PaginateDTO $paginateDTO): LengthAwarePaginator

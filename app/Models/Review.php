@@ -48,14 +48,4 @@ class Review extends Model
     {
         return $this->belongsTo(User::class, 'mentor_id');
     }
-
-    /**
-     * Комментарии ментора по конкретным файлам/строкам.
-     *
-     * @return HasMany<ReviewComment, $this>
-     */
-    public function reviewComments(): HasMany
-    {
-        return $this->hasMany(ReviewComment::class);
-    }
 }

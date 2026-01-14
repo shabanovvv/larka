@@ -8,9 +8,19 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 
 /**
  * AI-анализ кода с сохранённым ответом и метаданными.
+ *
+ * @property int $id
+ * @property int $code_submission_id
+ * @property AiProvider $provider
+ * @property string $summary
+ * @property string $suggestions
+ * @property int $score
+ * @property string $raw_response
+ * @property Carbon $created_at
  */
 class AiAnalysis extends Model
 {
@@ -28,6 +38,7 @@ class AiAnalysis extends Model
 
     protected $casts = [
         'raw_response' => 'array',
+        'suggestions' => 'array',
         'provider' => AiProvider::class,
     ];
 

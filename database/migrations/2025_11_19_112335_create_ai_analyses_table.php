@@ -39,18 +39,6 @@ return new class extends Migration
             $table->unsignedTinyInteger('rating')->nullable();
             $table->timestamps();
         });
-
-        /**
-         * Построчные замечания ментора.
-         */
-        Schema::create('review_comments', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('review_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('file_id')->nullable()->constrained('submission_files')->nullOnDelete();
-            $table->unsignedInteger('line_number')->nullable();
-            $table->text('comment');
-            $table->timestamps();
-        });
     }
 
     /**
@@ -58,7 +46,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('review_comments');
         Schema::dropIfExists('reviews');
         Schema::dropIfExists('ai_analyses');
     }

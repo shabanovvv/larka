@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "75f649bbe877a3a758d47141477e4384",
+    "content-hash": "69851a2c6a85559bcba0d69b4cdf4a95",
     "packages": [
         {
             "name": "brick/math",
@@ -3665,11 +3665,11 @@
         },
         {
             "name": "salavey/ai_code_reviewer",
-            "version": "dev-master",
+            "version": "dev-VShabanov/hw13",
             "dist": {
                 "type": "path",
-                "url": "./packages",
-                "reference": "5a053b0da28962e3c180802ca8259b974d12e71c"
+                "url": "./packages/ai_code_reviewer",
+                "reference": "7bd82fc16d3801e637f2a12dd03b76ec83ef4490"
             },
             "require": {
                 "illuminate/http": "^12.0",

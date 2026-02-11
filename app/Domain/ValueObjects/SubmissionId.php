@@ -1,0 +1,29 @@
+<?php
+
+namespace App\Domain\ValueObjects;
+
+use InvalidArgumentException;
+
+/**
+ * Идентификатор отправки кода (Code Submission).
+ */
+final readonly class SubmissionId
+{
+    public function __construct(
+        private int $value
+    ) {
+        if ($value <= 0) {
+            throw new InvalidArgumentException('SubmissionId должен быть положительным целым числом.');
+        }
+    }
+
+    public function value(): int
+    {
+        return $this->value;
+    }
+
+    public function equals(self $other): bool
+    {
+        return $this->value === $other->value;
+    }
+}

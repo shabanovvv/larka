@@ -54,6 +54,28 @@ In order to ensure that the Laravel community is welcoming to all, please review
 
 If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
 
+## Регулярные задачи (Cron)
+
+Расписание команд задаётся в `routes/console.php` (Laravel Schedule). На сервере достаточно одной записи в crontab, которая запускает планировщик каждую минуту:
+
+```bash
+* * * * * cd /path-to-your-project && php artisan schedule:run >> /dev/null 2>&1
+```
+
+Задачи по расписанию:
+
+| Время  | Команда                         | Описание |
+|--------|----------------------------------|----------|
+| 03:00  | `technologies:cache:clear`       | Сброс кэша пагинации технологий раз в сутки |
+| 03:05  | `technologies:cache:warm`        | Прогрев кэша технологий после сброса |
+| 08:00  | `codesubmission:forgot 5`        | Отчёт по непроверенным работам старше 5 дней |
+
+Команда `technologies:cache:benchmark` в расписание не входит (ручной запуск для замеров).
+
+### Запуск в кластере (несколько серверов)
+
+Для всех запланированных задач используется `onOneServer()`: в каждый момент задачу выполняет только один сервер. Для этого нужен **общий для всех узлов** драйвер кэша: `redis`, `database`, `memcached` или `dynamodb` (в `config/cache.php` и переменная `CACHE_STORE`). Тогда блокировки планировщика будут общими, и дублирования выполнения не будет.
+
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
